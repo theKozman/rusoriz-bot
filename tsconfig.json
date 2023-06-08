@@ -3,7 +3,7 @@
 
     "target": "ES2019",
     "module": "CommonJS",
-    "rootDir": "./src",
+    "rootDir": "api",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "outDir": "./build",
@@ -11,7 +11,7 @@
     "esModuleInterop": true,
     "strict": true,
     //"skipLibCheck": true,
-    "typeRoots": ["src/types/decs/decs.d.ts"]
+    "typeRoots": ["api/types/decs/decs.d.ts"]
   },
-  "include": ["src/"]
+  "include": ["api"]
 }
