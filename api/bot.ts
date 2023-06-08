@@ -15,4 +15,3 @@ bot.on('message', (ctx) => {
 });
 
 export default webhookCallback(bot, 'http');
-bot.start();
