@@ -1,0 +1,14 @@
+# Spacefile Docs: https://go.deta.dev/docs/spacefile/v0
+v: 0
+micros:
+  - name: rusoriz-bot
+    src: .
+    engine: nodejs16
+    primary: true
+    presets:
+      env:
+        - name: BOT_TOKEN
+          description: Telegram bot token
+    commands:
+      - npm run build
+    run: node build/bot.js

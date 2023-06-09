@@ -14,4 +14,6 @@ bot.on('message', (ctx) => {
   if (result) ctx.deleteMessage();
 });
 
-export default webhookCallback(bot, 'http');
+//export default webhookCallback(bot, 'http');
+bot.start();
+
