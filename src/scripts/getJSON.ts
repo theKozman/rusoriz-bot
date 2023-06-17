@@ -1,4 +1,4 @@
-import { listAllRecords } from './base';
+import { listAllRecords } from '../base';
 import fs from 'fs';
 
 (async () => {

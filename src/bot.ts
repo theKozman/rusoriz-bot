@@ -1,16 +1,10 @@
 import 'dotenv/config';
-import { Bot, webhookCallback } from 'grammy';
 import { ECommands, ELangs, TStatRecord } from './types';
 import LanguageDetect from 'languagedetect';
 import { createStatsRecord } from './base';
-import express from 'express';
+import { bot, main } from './app';
 
-const port = process.env.PORT || 3000;
-
-const bot = new Bot(String(process.env.BOT_TOKEN));
 const ld = new LanguageDetect();
-
-const server = express();
 
 const config = {
   ruMaxIndex: 2, // how far down russian should be down possible languages list to be considered detected (starts from 0)
@@ -100,25 +94,5 @@ bot.on('message:text', async (ctx) => {
   await ctx.reply(`russian detected\nruIndex: ${ruIndex};\nuaIndex: ${uaIndex}\nruWeight ${ru[1]};\nuaWeight: ${ua[1]}\ndelta: ${delta};`, { reply_to_message_id: ctx.msg.message_id });
 });
 
-/** server */
-const main = () => {
-  //server middlewares
-  server.use(express.json());
-  server.get('/', (req, res) => res.send('<h1>welcome!</h1>'));
-  server.use(webhookCallback(bot, 'express'));
-
-  server.listen(port, async () => {
-    console.log(`server is listening to port ${port}`);
-
-    const webhookUrl = `https://${process.env.DETA_SPACE_APP_HOSTNAME}`;
-
-    await bot.api.deleteWebhook();
-    await bot.api.setWebhook(webhookUrl, {
-      drop_pending_updates: true,
-    });
-  });
-};
-
-main();
-
-export default server;
+bot.start();
+//main();
