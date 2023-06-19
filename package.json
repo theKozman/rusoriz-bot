@@ -12,6 +12,7 @@
   "author": "theKozman",
   "license": "ISC",
   "dependencies": {
+    "@grammyjs/chat-members": "^1.0.10",
     "@grammyjs/storage-free": "^2.3.0",
     "cld": "^2.9.0",
     "deta": "^1.1.0",

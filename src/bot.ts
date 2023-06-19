@@ -1,11 +1,12 @@
 import 'dotenv/config';
-import { ECommands, ELangs, TGroupConfig, TStatRecord } from './types';
+import { ECommands, EDetectionModes, ELangs, TGroupConfig, TStatRecord } from './types';
 //import { createStatsRecord } from './base';
 import { bot, main } from './app';
 import cld from 'cld';
 import { session } from 'grammy';
 import { freeStorage } from '@grammyjs/storage-free';
 import { EPhrases } from './phrases';
+import { groupConfigKeyboard } from './menus';
 
 const config = {
   ruMaxIndex: 2, // how far down russian should be down possible languages list to be considered detected (starts from 0)
@@ -17,27 +18,36 @@ const config = {
 /**
  * TODO: handle photos
  * TODO: handle forwarded messages
+ * TODO: add admin edit rights
  */
 
 bot.use(
   session({
     initial: (): TGroupConfig => ({
-      onDetectMode: 'deletion',
+      onDetectMode: 'warning',
     }),
     storage: freeStorage<TGroupConfig>(bot.token),
   })
 );
 
 bot.command(ECommands.START, (ctx) => {
-  ctx.reply('Бот для розпізнавання і негайного видаляння повідомлень російською в телеграм групах. Для початку роботи потрібно додати бота в групу і надати йому права адміна');
+  ctx.reply(EPhrases.START);
 });
 
 bot.command(ECommands.CONFIG, (ctx) => {
   ctx.reply(
     `
-      Detection Mode: ${ctx.session.onDetectMode}
-    `
+      Режим відповіді на російську: ${ctx.session.onDetectMode}\nЗмінити режим:
+    `,
+    { reply_markup: groupConfigKeyboard }
   );
+});
+
+bot.on('callback_query:data', async (ctx) => {
+  ctx.session.onDetectMode = ctx.callbackQuery.data as EDetectionModes;
+  await ctx.answerCallbackQuery({
+    text: EPhrases.MODE_CHANGED,
+  });
 });
 
 bot.on('message:text', async (ctx) => {
@@ -76,7 +86,7 @@ bot.on('message:text', async (ctx) => {
 
   switch (ctx.session.onDetectMode) {
     case 'warning': {
-      return await ctx.reply(EPhrases.WARN_RU_USED);
+      return await ctx.reply(EPhrases.WARN_RU_USED, { reply_to_message_id: ctx.msg.message_id });
     }
     case 'info': {
       return await ctx.reply(`detected language: ${ru.name};\nreliable: ${detection?.reliable};\npercent: ${detection?.languages[0].percent};\nscore: ${detection?.languages[0].score}`, { reply_to_message_id: ctx.msg.message_id });
