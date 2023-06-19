@@ -1,4 +1,4 @@
 export enum ELangs {
-  ru = 'russian',
-  ua = 'ukrainian',
+  ru = 'RUSSIAN',
+  ua = 'UKRAINIAN',
 }
