@@ -2,10 +2,11 @@ import 'dotenv/config';
 import { Bot, webhookCallback } from 'grammy';
 import LanguageDetect from 'languagedetect';
 import express from 'express';
+import { TCustomContext } from './types';
 
 const port = process.env.PORT || 3000;
 
-export const bot = new Bot(String(process.env.BOT_TOKEN));
+export const bot = new Bot<TCustomContext>(String(process.env.BOT_TOKEN));
 
 export const server = express();
 

@@ -1,11 +1,11 @@
 import 'dotenv/config';
-import { ECommands, ELangs, TStatRecord } from './types';
-import LanguageDetect from 'languagedetect';
-import { createStatsRecord } from './base';
+import { ECommands, ELangs, TGroupConfig, TStatRecord } from './types';
+//import { createStatsRecord } from './base';
 import { bot, main } from './app';
 import cld from 'cld';
-
-const ld = new LanguageDetect();
+import { session } from 'grammy';
+import { freeStorage } from '@grammyjs/storage-free';
+import { EPhrases } from './phrases';
 
 const config = {
   ruMaxIndex: 2, // how far down russian should be down possible languages list to be considered detected (starts from 0)
@@ -15,20 +15,40 @@ const config = {
 };
 
 /**
- * TODO: handle photos from bogdan
- * TODO: handle forwarded messages from bogdan
+ * TODO: handle photos
+ * TODO: handle forwarded messages
  */
+
+bot.use(
+  session({
+    initial: (): TGroupConfig => ({
+      onDetectMode: 'deletion',
+    }),
+    storage: freeStorage<TGroupConfig>(bot.token),
+  })
+);
 
 bot.command(ECommands.START, (ctx) => {
   ctx.reply('Бот для розпізнавання і негайного видаляння повідомлень російською в телеграм групах. Для початку роботи потрібно додати бота в групу і надати йому права адміна');
 });
 
+bot.command(ECommands.CONFIG, (ctx) => {
+  ctx.reply(
+    `
+      Detection Mode: ${ctx.session.onDetectMode}
+    `
+  );
+});
+
 bot.on('message:text', async (ctx) => {
   const reject = async (msg: string, data?: TStatRecord) => {
+    if (ctx.session.onDetectMode !== 'info') return;
+
     if (data) {
       data.rejectReason = msg;
-      await createStatsRecord(data);
+      // await createStatsRecord(data);
     }
+
     await ctx.reply(`Russian not detected, reason: ${msg}`, { reply_to_message_id: ctx.msg.message_id });
   };
 
@@ -54,9 +74,18 @@ bot.on('message:text', async (ctx) => {
   // Check if score is high enough
   if (ru.score < config.minScore) return await reject(`${ELangs.ru} guess score is too low`);
 
-  console.log(detection);
-  await ctx.reply(`detected language: ${ru.name};\nreliable: ${detection?.reliable};\npercent: ${detection?.languages[0].percent};\nscore: ${detection?.languages[0].score}`, { reply_to_message_id: ctx.msg.message_id });
+  switch (ctx.session.onDetectMode) {
+    case 'warning': {
+      return await ctx.reply(EPhrases.WARN_RU_USED);
+    }
+    case 'info': {
+      return await ctx.reply(`detected language: ${ru.name};\nreliable: ${detection?.reliable};\npercent: ${detection?.languages[0].percent};\nscore: ${detection?.languages[0].score}`, { reply_to_message_id: ctx.msg.message_id });
+    }
+    case 'deletion': {
+      return await ctx.deleteMessage();
+    }
+  }
 });
 
-bot.start();
+bot.start({ drop_pending_updates: true });
 //main();
