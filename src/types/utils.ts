@@ -4,6 +4,6 @@ export enum ELangs {
 }
 
 export enum ID {
-  gachistan = 1403722184,
+  gachistan = -1001403722184,
   kozman = 451912327,
 }
