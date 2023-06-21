@@ -6,7 +6,7 @@ import { EPhrases } from '../phrases';
 
 export const languageDetect = new Composer<TCustomContext>();
 
-languageDetect.on('message:text', async (ctx) => {
+languageDetect.on(['message:text', 'edited_message:text'], async (ctx) => {
   const reject = async (msg: string, data?: TStatRecord) => {
     if (ctx.session.onDetectMode !== 'info') return;
 
@@ -20,7 +20,7 @@ languageDetect.on('message:text', async (ctx) => {
 
   let detection;
   try {
-    detection = await cld.detect(ctx.message?.text);
+    detection = await cld.detect(String(ctx.message?.text || ctx.update?.edited_message?.text));
   } catch (err) {
     return await reject(`Can't detect any language`);
   }
