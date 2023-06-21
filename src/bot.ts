@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { ECommands, EDetectionModes, ELangs, TGroupConfig, TStatRecord } from './types';
+import { ECommands, EDetectionModes, ELangs, ID, TGroupConfig, TStatRecord } from './types';
 //import { createStatsRecord } from './base';
 import { bot } from './app';
 import { session } from 'grammy';
@@ -39,6 +39,9 @@ bot.command(ECommands.CONFIG, (ctx) => {
 });
 
 bot.on('callback_query:data', async (ctx) => {
+  // make sure that only i can change config in gachistan
+  // TODO: make only user that added bot able to do that and add permissions?
+  if (ctx.chat?.id === ID.gachistan && ctx.from.id !== ID.kozman) return;
   ctx.session.onDetectMode = ctx.callbackQuery.data as EDetectionModes;
   await ctx.answerCallbackQuery({
     text: EPhrases.MODE_CHANGED,
