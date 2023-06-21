@@ -15,16 +15,12 @@
     "@grammyjs/chat-members": "^1.0.10",
     "@grammyjs/storage-free": "^2.3.0",
     "cld": "^2.9.0",
-    "deta": "^1.1.0",
     "dotenv": "^16.0.3",
-    "express": "^4.18.2",
     "fetch-node": "^0.0.1",
-    "grammy": "^1.16.1",
-    "languagedetect": "^2.0.0"
+    "grammy": "^1.16.1"
   },
   "devDependencies": {
     "@types/debug": "^4.1.7",
-    "@types/express": "^4.17.17",
     "@types/node-fetch": "^2.6.2",
     "@vercel/node": "^2.15.1",
     "typescript": "^5.1.3"
