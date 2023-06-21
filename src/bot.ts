@@ -19,6 +19,8 @@ const config = {
  * TODO: handle photos
  * TODO: handle forwarded messages
  * TODO: add admin edit rights
+ * TODO: filter forwarded messages, etc
+ * TODO: allow setting custom warning message
  */
 
 bot.use(
