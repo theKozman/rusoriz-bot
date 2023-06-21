@@ -7,6 +7,7 @@ import { freeStorage } from '@grammyjs/storage-free';
 import { EPhrases } from './phrases';
 import { groupConfigKeyboard } from './menus';
 import { languageDetect } from './middleware/languageDetect';
+import { config, start } from './middleware/commands';
 
 /**
  * TODO: handle photos
@@ -25,18 +26,9 @@ bot.use(
   })
 );
 
-bot.command(ECommands.START, (ctx) => {
-  ctx.reply(EPhrases.START);
-});
+bot.use(start);
 
-bot.command(ECommands.CONFIG, (ctx) => {
-  ctx.reply(
-    `
-    Режим відповіді на російську: ${ctx.session.onDetectMode}\nЗмінити режим:
-    `,
-    { reply_markup: groupConfigKeyboard }
-  );
-});
+bot.use(config);
 
 bot.on('callback_query:data', async (ctx) => {
   // make sure that only i can change config in gachistan
