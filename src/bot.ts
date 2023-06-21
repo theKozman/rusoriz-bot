@@ -8,6 +8,7 @@ import { EPhrases } from './phrases';
 import { groupConfigKeyboard } from './menus';
 import { languageDetect } from './middleware/languageDetect';
 import { config, start } from './middleware/commands';
+import { configCallback } from './middleware/callbacks';
 
 /**
  * TODO: handle photos
@@ -30,15 +31,7 @@ bot.use(start);
 
 bot.use(config);
 
-bot.on('callback_query:data', async (ctx) => {
-  // make sure that only i can change config in gachistan
-  // TODO: make only user that added bot able to do that and add permissions?
-  if (ctx.chat?.id === ID.gachistan && ctx.from.id !== ID.kozman) return;
-  ctx.session.onDetectMode = ctx.callbackQuery.data as EDetectionModes;
-  await ctx.answerCallbackQuery({
-    text: EPhrases.MODE_CHANGED,
-  });
-});
+bot.use(configCallback);
 
 bot.use(languageDetect);
 
