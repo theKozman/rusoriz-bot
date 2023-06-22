@@ -19,7 +19,8 @@
     "dotenv": "^16.0.3",
     "fetch-node": "^0.0.1",
     "grammy": "^1.16.1",
-    "nspell": "^2.1.5"
+    "nspell": "^2.1.5",
+    "openai": "^3.3.0"
   },
   "devDependencies": {
     "@types/debug": "^4.1.7",

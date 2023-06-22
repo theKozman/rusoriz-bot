@@ -1,6 +1,6 @@
 import { Composer } from 'grammy';
 import cld from 'cld';
-import { detect } from '../utils/ruDetection';
+import { detect } from '../ruDetection';
 import { ELangs, TCustomContext, TErrorType, TStatRecord } from '../types';
 import { config } from '../config';
 import { EPhrases } from '../phrases';

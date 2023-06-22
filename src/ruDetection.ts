@@ -1,6 +1,6 @@
 import cld from 'cld';
-import { ELangs, TErrorType } from '../types';
-import { config } from '../config';
+import { ELangs, TErrorType } from './types';
+import { config } from './config';
 
 const fail = (type: TErrorType, msg: string) => {
   return {
