@@ -16,6 +16,7 @@ import { configCallback } from './middleware/callbacks';
  * TODO: add admin edit rights
  * TODO: filter forwarded messages, etc
  * TODO: allow setting custom warning message
+ * TODO: projects is getting pretty big, rollup maybe?
  */
 
 bot.use(
