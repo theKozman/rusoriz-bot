@@ -1,44 +1,52 @@
 import { Composer } from 'grammy';
 import cld from 'cld';
-import { ELangs, TCustomContext, TStatRecord } from '../types';
+import { detect } from '../utils/ruDetection';
+import { ELangs, TCustomContext, TErrorType, TStatRecord } from '../types';
 import { config } from '../config';
 import { EPhrases } from '../phrases';
+import { reverse, spellCorrection } from '../utils';
 
 export const languageDetect = new Composer<TCustomContext>();
 
 languageDetect.on(['message:text', 'edited_message:text'], async (ctx) => {
-  const reject = async (msg: string, data?: TStatRecord) => {
+  const reject = async (msg: string) => {
     if (ctx.session.onDetectMode !== 'info') return;
-
-    if (data) {
-      data.rejectReason = msg;
-      // await createStatsRecord(data);
-    }
-
     await ctx.reply(`Russian not detected, reason: ${msg}`, { reply_to_message_id: ctx.msg.message_id });
   };
 
-  let detection;
-  try {
-    detection = await cld.detect(String(ctx.message?.text || ctx.update?.edited_message?.text));
-  } catch (err) {
-    return await reject(`Can't detect any language`);
-  }
+  const text = String(ctx?.message?.text || ctx.update?.edited_message?.text);
 
-  const ru = detection.languages.find((l) => l.name === ELangs.ru);
-  const ua = detection.languages.find((l) => l.name === ELangs.ua);
+  const tryDetect = async (
+    text: string
+  ): Promise<void | {
+    detection: DetectLanguage;
+    ru: Language;
+    ua: Language | undefined;
+    en: Language | undefined;
+  }> => {
+    let result;
+    try {
+      result = await detect(text);
+    } catch (err: any) {
+      if (err?.msg && err?.type) {
+        const type = err.type as TErrorType;
+        if (type === 'no-lang-found') {
+          // if no language, high chance it's translit
+          // TODO: handle if it's not translit and dictionary somehow converts it to russian
+          let correctedText = spellCorrection(reverse(text));
+          console.log(correctedText);
+          return await tryDetect(correctedText);
+        }
+      }
+      return reject(err.msg || `Can't identify error: ${err}`);
+    }
+    return result;
+  };
+  const detectResult = await tryDetect(text);
 
-  // Check if russian is detected
-  if (!ru) return await reject(`${ELangs.ru} not found`);
+  if (!detectResult) return;
 
-  // Check if message has both ua and ru
-  if (ru && ua) return await reject(`Both ${ELangs.ru} and ${ELangs.ua} detected`);
-
-  // Check if precision percent is too low
-  if (ru.percent < config.precisionPercent) return await reject(`${ELangs.ru} precision percent is too low`);
-
-  // Check if score is high enough
-  if (ru.score < config.minScore) return await reject(`${ELangs.ru} guess score is too low`);
+  const { ru, detection } = detectResult;
 
   switch (ctx.session.onDetectMode) {
     case 'warning': {
