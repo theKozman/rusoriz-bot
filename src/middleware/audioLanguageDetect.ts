@@ -12,7 +12,7 @@ import { convertAudio } from '../utils/convertAudio';
 export const audioLanguageDetect = new Composer<TCustomContext>();
 
 // ! this mess needs A LOT of refactoring
-audioLanguageDetect.on(['message:voice'], async (ctx) => {
+audioLanguageDetect.on(['message:voice', 'message:video_note'], async (ctx) => {
   const minute = 60;
   const reject = async (msg: string) => {
     if (ctx.session.onDetectMode !== 'info') return;
@@ -23,14 +23,16 @@ audioLanguageDetect.on(['message:voice'], async (ctx) => {
 
   // dont process audios longer than a minute for now
   // duration in seconds
-  if (ctx.msg.voice.duration > minute) return;
+  const media = ctx.msg?.voice || ctx.msg.video_note;
+
+  if (media && media.duration > minute) return;
 
   const file = await ctx.getFile(); // valid for at least 1 hour
   const path = file.getUrl();
   // Get Transcription
 
   const filepath = await convertAudio(path);
-
+  console.log(filepath);
   const transcript = await transcribe(filepath);
 
   // delete converted file after usage
