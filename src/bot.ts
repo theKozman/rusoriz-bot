@@ -9,6 +9,9 @@ import { groupConfigKeyboard } from './menus';
 import { languageDetect } from './middleware/languageDetect';
 import { config, start } from './middleware/commands';
 import { configCallback } from './middleware/callbacks';
+import { listModels } from './whisper';
+import { audioLanguageDetect } from './middleware/audioLanguageDetect';
+import { hydrateFiles } from '@grammyjs/files';
 
 /**
  * TODO: handle photos
@@ -28,6 +31,8 @@ bot.use(
   })
 );
 
+bot.api.config.use(hydrateFiles(bot.token));
+
 bot.use(start);
 
 bot.use(config);
@@ -36,5 +41,8 @@ bot.use(configCallback);
 
 bot.use(languageDetect);
 
+bot.use(audioLanguageDetect);
+
 bot.start({ drop_pending_updates: true });
+
 //main();
