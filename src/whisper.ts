@@ -20,6 +20,6 @@ export const transcribe = async (filepath: string) => {
   } catch (err) {
     return console.error(err);
   }
-  console.log(response.data);
-  return response.data.text;
+
+  return response.data;
 };
