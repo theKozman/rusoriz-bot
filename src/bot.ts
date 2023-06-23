@@ -9,6 +9,9 @@ import { groupConfigKeyboard } from './menus';
 import { languageDetect } from './middleware/languageDetect';
 import { config, start } from './middleware/commands';
 import { configCallback } from './middleware/callbacks';
+import { listModels } from './whisper';
+import { audioLanguageDetect } from './middleware/audioLanguageDetect';
+import { hydrateFiles } from '@grammyjs/files';
 
 /**
  * TODO: handle photos
@@ -16,6 +19,7 @@ import { configCallback } from './middleware/callbacks';
  * TODO: add admin edit rights
  * TODO: filter forwarded messages, etc
  * TODO: allow setting custom warning message
+ * TODO: projects is getting pretty big, rollup maybe?
  */
 
 bot.use(
@@ -27,6 +31,8 @@ bot.use(
   })
 );
 
+bot.api.config.use(hydrateFiles(bot.token));
+
 bot.use(start);
 
 bot.use(config);
@@ -35,5 +41,8 @@ bot.use(configCallback);
 
 bot.use(languageDetect);
 
+bot.use(audioLanguageDetect);
+
 bot.start({ drop_pending_updates: true });
+
 //main();

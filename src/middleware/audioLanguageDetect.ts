@@ -1,20 +1,50 @@
+import 'dotenv/config';
 import { Composer } from 'grammy';
-import cld from 'cld';
 import { detect } from '../utils/ruDetection';
 import { ELangs, TCustomContext, TErrorType, TStatRecord } from '../types';
-import { config } from '../config';
 import { EPhrases } from '../phrases';
 import { reverse, spellCorrection } from '../utils';
+import crypto from 'crypto';
+import fs from 'fs';
+import { transcribe } from '../whisper';
+import { convertAudio } from '../utils/convertAudio';
 
-export const languageDetect = new Composer<TCustomContext>();
+export const audioLanguageDetect = new Composer<TCustomContext>();
 
-languageDetect.on(['message:text', 'edited_message:text'], async (ctx) => {
+// ! this mess needs A LOT of refactoring
+audioLanguageDetect.on(['message:voice', 'message:video_note'], async (ctx) => {
+  const maxDuration = 20; // max duration in seconds
   const reject = async (msg: string) => {
     if (ctx.session.onDetectMode !== 'info') return;
     await ctx.reply(`Russian not detected, reason: ${msg}`, { reply_to_message_id: ctx.msg.message_id });
   };
 
-  const text = String(ctx?.message?.text || ctx.update?.edited_message?.text);
+  // Get Audio
+
+  // dont process audios longer than a minute for now
+  // duration in seconds
+  const media = ctx.msg?.voice || ctx.msg.video_note;
+
+  if (media && media.duration > maxDuration) return;
+
+  const file = await ctx.getFile(); // valid for at least 1 hour
+  const path = file.getUrl();
+  // Get Transcription
+
+  const filepath = await convertAudio(path);
+  console.log(filepath);
+  const transcript = await transcribe(filepath);
+
+  // delete converted file after usage
+  await new Promise<void>((res) =>
+    fs.unlink(filepath, () => {
+      res();
+    })
+  );
+
+  if (typeof transcript !== 'string') return;
+
+  const text = transcript;
 
   const tryDetect = async (
     text: string

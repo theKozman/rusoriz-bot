@@ -1,10 +1,11 @@
+import { FileFlavor } from '@grammyjs/files';
 import { Context, SessionFlavor } from 'grammy';
 
 export type TGroupConfig = {
   onDetectMode: `${EDetectionModes}`;
 };
 
-export type TCustomContext = Context & SessionFlavor<TGroupConfig>;
+export type TCustomContext = FileFlavor<Context> & SessionFlavor<TGroupConfig>;
 
 export enum ECommands {
   START = 'start',
