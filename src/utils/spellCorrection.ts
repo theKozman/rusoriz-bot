@@ -10,6 +10,7 @@ const ondictionary = (err: unknown, dict: Dictionary) => {
 dictionaryRu(ondictionary);
 
 export const spellCorrection = (text: string) => {
+  return text;
   const arr = text.trim().split(' ');
   const corrected = arr
     .map((word) => {
