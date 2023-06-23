@@ -1,6 +1,6 @@
 export const config = {
   ruMaxIndex: 2, // how far down russian should be down possible languages list to be considered detected (starts from 0)
   delta: 1.5, // how different ru and ua weights should be to be considered detected
-  precisionPercent: 95.1, // how precise guess should be to pass
+  precisionPercent: 95, // how precise guess should be to pass
   minScore: 400, // lowest guess score to pass
 };
