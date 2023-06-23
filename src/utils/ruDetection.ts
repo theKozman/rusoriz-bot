@@ -1,6 +1,7 @@
 import cld from 'cld';
 import { ELangs, TErrorType } from '../types';
 import { config } from '../config';
+import { ruSymbols, uaSymbols } from '../constants';
 
 const fail = (type: TErrorType, msg: string) => {
   return {
@@ -10,9 +11,21 @@ const fail = (type: TErrorType, msg: string) => {
 };
 
 export const detect = async (text: string) => {
+  let options: { languageHint?: string } = {};
   let detection;
+
+  // hint detection based on unique letters
+  const ruMatch = text.match(ruSymbols) || [];
+  const uaMatch = text.match(uaSymbols) || [];
+  if (ruMatch > uaMatch) {
+    options.languageHint = ELangs.ru;
+  }
+  if (ruMatch < uaMatch) {
+    options.languageHint = ELangs.ua;
+  }
+  console.log(options.languageHint);
   try {
-    detection = await cld.detect(text);
+    detection = await cld.detect(text, options);
   } catch (err) {
     throw fail('no-lang-found', `Can't detect any language`);
   }
