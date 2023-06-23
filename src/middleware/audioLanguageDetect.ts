@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { Composer } from 'grammy';
-import { detect } from '../ruDetection';
+import { detect } from '../utils/ruDetection';
 import { ELangs, TCustomContext, TErrorType, TStatRecord } from '../types';
 import { EPhrases } from '../phrases';
 import { reverse, spellCorrection } from '../utils';
@@ -13,7 +13,7 @@ export const audioLanguageDetect = new Composer<TCustomContext>();
 
 // ! this mess needs A LOT of refactoring
 audioLanguageDetect.on(['message:voice', 'message:video_note'], async (ctx) => {
-  const minute = 60;
+  const maxDuration = 20; // max duration in seconds
   const reject = async (msg: string) => {
     if (ctx.session.onDetectMode !== 'info') return;
     await ctx.reply(`Russian not detected, reason: ${msg}`, { reply_to_message_id: ctx.msg.message_id });
@@ -25,7 +25,7 @@ audioLanguageDetect.on(['message:voice', 'message:video_note'], async (ctx) => {
   // duration in seconds
   const media = ctx.msg?.voice || ctx.msg.video_note;
 
-  if (media && media.duration > minute) return;
+  if (media && media.duration > maxDuration) return;
 
   const file = await ctx.getFile(); // valid for at least 1 hour
   const path = file.getUrl();
