@@ -14,7 +14,8 @@ languageDetect.on(['message:text', 'edited_message:text', 'message:caption'], as
     await ctx.reply(`Russian not detected, reason: ${msg}`, { reply_to_message_id: ctx.msg.message_id });
   };
 
-  const text = String(ctx?.message?.text || ctx.update?.edited_message?.text);
+  const text = String(ctx?.message?.text || ctx.update?.edited_message?.text || ctx.message?.caption);
+  console.log(text);
 
   let tried = false;
   const tryDetect = async (
