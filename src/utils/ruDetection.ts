@@ -17,15 +17,10 @@ export const detect = async (text: string) => {
   // hint detection based on unique letters
   const ruMatch = text.match(ruSymbols) || [];
   const uaMatch = text.match(uaSymbols) || [];
-  if (ruMatch > uaMatch) {
-    options.languageHint = ELangs.ru;
-  }
-  if (ruMatch < uaMatch) {
-    options.languageHint = ELangs.ua;
-  }
-  console.log(options.languageHint);
+  if (ruMatch > uaMatch) options.languageHint = ELangs.ru;
+  if (ruMatch < uaMatch) options.languageHint = ELangs.ua;
   try {
-    detection = await cld.detect(text, options);
+    detection = await cld.detect(text, options || undefined);
   } catch (err) {
     throw fail('no-lang-found', `Can't detect any language`);
   }

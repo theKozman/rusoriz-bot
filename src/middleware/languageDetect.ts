@@ -36,6 +36,7 @@ languageDetect.on(['message:text', 'edited_message:text'], async (ctx) => {
           // TODO: handle if it's not translit and dictionary somehow converts it to russian
           let correctedText = spellCorrection(reverse(text));
           if (!tried) {
+            tried = true;
             return await tryDetect(correctedText);
           }
         }
