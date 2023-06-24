@@ -13,6 +13,12 @@ export const swapLetters = (message: string) => {
     ρ: 'р',
     α: 'а',
     ο: 'о',
+    g: 'г',
+    t: 'т',
+    z: 'с',
+    ℯ: 'е',
+    D: 'д',
+    b: 'б'
 
     // Add more mappings as needed
   };
@@ -28,4 +34,3 @@ export const swapLetters = (message: string) => {
 
   return swappedMessage;
 };
-('Москва за 3 дня');
