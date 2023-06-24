@@ -1,7 +1,8 @@
 import cld from 'cld';
 import { ELangs, TErrorType } from '../types';
 import { config } from '../config';
-import { ruSymbols, uaSymbols } from '../constants';
+import { ruAlphabet, ruSymbols, swapSymbols, uaSymbols } from '../constants';
+import { swapLetters } from './swapLetters';
 
 const fail = (type: TErrorType, msg: string) => {
   return {
@@ -13,6 +14,17 @@ const fail = (type: TErrorType, msg: string) => {
 export const detect = async (text: string) => {
   let options: { languageHint?: string } = {};
   let detection;
+
+  // check and swap possible similar symbols
+
+  // message has to have some number of russian symbols in the first place
+  const ruSymbolsMatch = text.match(ruAlphabet) || [];
+  const swappedSymbolsMatch = text.match(swapSymbols) || [];
+  if (ruSymbolsMatch.length > 0 && swappedSymbolsMatch.length > 0) {
+    console.log(text);
+    text = swapLetters(text);
+    console.log(text);
+  }
 
   // hint detection based on unique letters
   const ruMatch = text.match(ruSymbols) || [];

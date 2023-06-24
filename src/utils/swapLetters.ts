@@ -1,4 +1,6 @@
-export const swapEnglishToRussian = (message: string) => {
+import { swapSymbols } from '../constants';
+
+export const swapLetters = (message: string) => {
   const englishLetters: { [key: string]: string } = {
     a: 'а',
     c: 'с',
@@ -7,13 +9,24 @@ export const swapEnglishToRussian = (message: string) => {
     p: 'р',
     x: 'х',
     y: 'у',
+    τ: 'т',
+    ρ: 'р',
+    α: 'а',
+    ο: 'о',
+
     // Add more mappings as needed
   };
 
-  const swappedMessage = message.replace(/([aceopxy])+/gi, (match: string) => {
+  const swappedMessage = message.replace(swapSymbols, (match: string) => {
     const lowerCaseMatch = match.toLowerCase();
-    return englishLetters[lowerCaseMatch] || match;
+
+    return lowerCaseMatch
+      .split('')
+      .map((l) => englishLetters[l] || match)
+      .join('');
   });
 
   return swappedMessage;
 };
+
+('τeпeρь музыка вагнeροв звучит по дρyгому');
