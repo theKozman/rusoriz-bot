@@ -46,6 +46,7 @@ audioLanguageDetect.on(['message:voice', 'message:video_note'], async (ctx) => {
 
   const text = transcript;
 
+  let tried = false;
   const tryDetect = async (
     text: string
   ): Promise<void | {
@@ -64,7 +65,10 @@ audioLanguageDetect.on(['message:voice', 'message:video_note'], async (ctx) => {
           // if no language, high chance it's translit
           // TODO: handle if it's not translit and dictionary somehow converts it to russian
           let correctedText = spellCorrection(reverse(text));
-          return await tryDetect(correctedText);
+          if (!tried) {
+            tried = true;
+            return await tryDetect(correctedText);
+          }
         }
       }
       return reject(err.msg || `Can't identify error: ${err}`);

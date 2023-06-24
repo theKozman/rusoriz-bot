@@ -16,6 +16,7 @@ languageDetect.on(['message:text', 'edited_message:text'], async (ctx) => {
 
   const text = String(ctx?.message?.text || ctx.update?.edited_message?.text);
 
+  let tried = false;
   const tryDetect = async (
     text: string
   ): Promise<void | {
@@ -34,7 +35,10 @@ languageDetect.on(['message:text', 'edited_message:text'], async (ctx) => {
           // if no language, high chance it's translit
           // TODO: handle if it's not translit and dictionary somehow converts it to russian
           let correctedText = spellCorrection(reverse(text));
-          return await tryDetect(correctedText);
+          if (!tried) {
+            tried = true;
+            return await tryDetect(correctedText);
+          }
         }
       }
       return reject(err.msg || `Can't identify error: ${err}`);
