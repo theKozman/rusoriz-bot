@@ -8,7 +8,7 @@ import { reverse, spellCorrection } from '../utils';
 
 export const languageDetect = new Composer<TCustomContext>();
 
-languageDetect.on(['message:text', 'edited_message:text'], async (ctx) => {
+languageDetect.on(['message:text', 'edited_message:text', 'message:caption'], async (ctx) => {
   const reject = async (msg: string) => {
     if (ctx.session.onDetectMode !== 'info') return;
     await ctx.reply(`Russian not detected, reason: ${msg}`, { reply_to_message_id: ctx.msg.message_id });

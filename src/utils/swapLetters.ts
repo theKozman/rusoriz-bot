@@ -28,5 +28,4 @@ export const swapLetters = (message: string) => {
 
   return swappedMessage;
 };
-
-('τeпeρь музыка вагнeροв звучит по дρyгому');
+('Москва за 3 дня');
