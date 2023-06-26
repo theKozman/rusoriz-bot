@@ -52,7 +52,7 @@ languageDetect.on(['message:text', 'edited_message:text', 'message:caption'], as
 
   const { ru, detection } = detectResult;
 
-  switch (ctx.session.onDetectMode) {
+  switch (ctx.session.config.onDetectMode) {
     case 'warning': {
       return await ctx.reply(EPhrases.WARN_RU_USED, { reply_to_message_id: ctx.msg.message_id });
     }

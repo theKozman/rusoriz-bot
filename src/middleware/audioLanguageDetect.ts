@@ -15,7 +15,7 @@ export const audioLanguageDetect = new Composer<TCustomContext>();
 audioLanguageDetect.on(['message:voice', 'message:video_note'], async (ctx) => {
   const maxDuration = 20; // max duration in seconds
   const reject = async (msg: string) => {
-    if (ctx.session.onDetectMode !== 'info') return;
+    if (ctx.session.config.onDetectMode !== 'info') return;
     await ctx.reply(`Russian not detected, reason: ${msg}`, { reply_to_message_id: ctx.msg.message_id });
   };
 
@@ -81,7 +81,7 @@ audioLanguageDetect.on(['message:voice', 'message:video_note'], async (ctx) => {
 
   const { ru, detection } = detectResult;
 
-  switch (ctx.session.onDetectMode) {
+  switch (ctx.session.config.onDetectMode) {
     case 'warning': {
       return await ctx.reply(EPhrases.WARN_RU_USED, { reply_to_message_id: ctx.msg.message_id });
     }

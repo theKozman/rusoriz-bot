@@ -45,4 +45,6 @@ bot.use(audioLanguageDetect);
 
 bot.start({ drop_pending_updates: true });
 
+bot.on('message', (ctx) => console.log(ctx));
+
 //main();

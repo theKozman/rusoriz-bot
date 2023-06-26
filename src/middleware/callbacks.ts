@@ -12,7 +12,7 @@ configCallback.on('callback_query:data', async (ctx) => {
       text: EPhrases.MODE_PERMISSION_DENIED,
     });
   }
-  ctx.session.onDetectMode = ctx.callbackQuery.data as EDetectionModes;
+  ctx.session.config.onDetectMode = ctx.callbackQuery.data as EDetectionModes;
   await ctx.answerCallbackQuery({
     text: EPhrases.MODE_CHANGED,
   });
